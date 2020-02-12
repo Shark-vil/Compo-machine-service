@@ -15,6 +15,11 @@ class CreateStoresTable extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('street');
+            $table->string('city');
+            $table->integer('numprice_on_object');
+            $table->text('additional_information');
             $table->timestamps();
         });
     }
