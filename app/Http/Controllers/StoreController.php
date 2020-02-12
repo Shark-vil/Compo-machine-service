@@ -14,7 +14,7 @@ class StoreController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
     }
     
     /**
@@ -24,10 +24,9 @@ class StoreController extends Controller
      */
     public function index()
     {
-        //$stores = Store::all();
-        //dd($stores);
+        $stores = Store::get();
 
-        return view('store/add');
+        return view('stores/index', [ 'stores' => $stores ]);
     }
 
     /**
@@ -37,7 +36,7 @@ class StoreController extends Controller
      */
     public function create()
     {
-        //
+        return view('stores/create');
     }
 
     /**
@@ -56,12 +55,26 @@ class StoreController extends Controller
 
         if ( !isset($name) || !isset($street) || !isset($city) || !isset($numprice_on_object) )
         {
-            //
+            return response()->json([
+                'success' => false,
+                'content' => 'error',
+                'error' => [
+                    'type' => 'values_missing',
+                    'description' => 'Some values are missing.' 
+                ]
+            ]);
         }
 
         if ( empty($name) || empty($street) || empty($city) || intval($numprice_on_object) < 0 )
         {
-            //
+            return response()->json([
+                'success' => false,
+                'content' => 'error',
+                'error' => [
+                    'type' => 'bad_value',
+                    'description' => 'The received parameters have invalid values.' 
+                ]
+            ]);
         }
         
         $data = array(
@@ -72,18 +85,40 @@ class StoreController extends Controller
             'additional_information' => ( !isset($additional_information) ) ? "" : $additional_information
         );
 
-        Store::insert($data);
+        $StoreId = Store::insertGetId($data);
+        $LastData = Store::where('id', $StoreId)->limit(1)->get()->toArray()[0];
+
+        return response()->json([
+            'success' => true,
+            'content' => $LastData
+        ]);
     }
 
     /**
      * Display the specified resource.
-     *
+     *----------------------
+     * OLD: public function show(Store $store)
+     * ---------------------
      * @param  \App\Store  $store
      * @return \Illuminate\Http\Response
      */
-    public function show(Store $store)
+    public function show(int $storeid)
     {
-        //
+        $store = Store::where('id', $storeid)->limit(1)->get()->toArray();
+        if ( count( $store ) == 0 )
+            return response()->json([
+                'success' => false,
+                'content' => 'error',
+                'error' => [
+                    'type' => 'bad_id',
+                    'description' => 'There is no such value in the database.' 
+                ]
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'content' => $store[0]
+        ]);
     }
 
     /**

@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route::middleware('auth:web')->post('/stores/store', 'StoreController@store');
+// Route::middleware('auth:api')->get('/stores/show/{id}', 'StoreController@show');

@@ -18,9 +18,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-//Route::resource('stores', 'StoreController');
-
 Route::get('/stores', 'StoreController@index');
 
+// Not protected api
 Route::post('/api/stores/store', 'StoreController@store');
+Route::get('/api/stores/show/{id}', 'StoreController@show');
