@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Store;
 use Illuminate\Http\Request;
+use Illuminate\Html\FormFacade;
 
 class StoreController extends Controller
 {
@@ -14,7 +15,10 @@ class StoreController extends Controller
      */
     public function index()
     {
-        //
+        //$stores = Store::all();
+        //dd($stores);
+
+        return view('store/add');
     }
 
     /**
