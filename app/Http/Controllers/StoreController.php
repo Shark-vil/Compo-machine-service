@@ -4,10 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Store;
 use Illuminate\Http\Request;
-use Illuminate\Html\FormFacade;
 
 class StoreController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -39,7 +48,31 @@ class StoreController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $name = $request->input('name');
+        $street = $request->input('street');
+        $city = $request->input('city');
+        $numprice_on_object = $request->input('numprice_on_object');
+        $additional_information = $request->input('additional_information');
+
+        if ( !isset($name) || !isset($street) || !isset($city) || !isset($numprice_on_object) )
+        {
+            //
+        }
+
+        if ( empty($name) || empty($street) || empty($city) || intval($numprice_on_object) < 0 )
+        {
+            //
+        }
+        
+        $data = array(
+            'name' => $name,
+            'street' => $street,
+            'city' => $city,
+            'numprice_on_object' => $numprice_on_object,
+            'additional_information' => ( !isset($additional_information) ) ? "" : $additional_information
+        );
+
+        Store::insert($data);
     }
 
     /**
