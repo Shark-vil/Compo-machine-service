@@ -39,6 +39,11 @@ class StoreController extends Controller
         return view('stores/create');
     }
 
+    public function view(int $storeid)
+    {
+        return view('stores/view', ['storeid' => $storeid]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -98,6 +103,7 @@ class StoreController extends Controller
      * Display the specified resource.
      *----------------------
      * OLD: public function show(Store $store)
+     * NEW: public function show(int $storeid)
      * ---------------------
      * @param  \App\Store  $store
      * @return \Illuminate\Http\Response
