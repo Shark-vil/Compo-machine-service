@@ -20,22 +20,22 @@
                 @endif
 
                 <div class="card-body">
-                    {!! Form::open( ['url' => 'stores/create', 'method' => 'POST' ] ) !!}
+                    {!! Form::open( ['url' => "stores/change/{$data->content->id}", 'method' => 'POST' ] ) !!}
                         <div class="form-group">
                             {{ Form::label( 'title', 'Название' ) }}
-                            {{ Form::text( 'name', '', [ 'class' => 'form-control', 'placeholder' => 'Введите название магазина' ] ) }}
+                            {{ Form::text( 'name', "{$data->content->name}", [ 'class' => 'form-control', 'placeholder' => 'Введите название магазина' ] ) }}
                             <br>
                             {{ Form::label( 'title', 'Улица' ) }}
-                            {{ Form::text( 'street', '', [ 'class' => 'form-control', 'placeholder' => 'Введите название улицы' ] ) }}
+                            {{ Form::text( 'street', "{$data->content->street}", [ 'class' => 'form-control', 'placeholder' => 'Введите название улицы' ] ) }}
                             <br>
                             {{ Form::label( 'title', 'Город' ) }}
-                            {{ Form::text( 'city', '', [ 'class' => 'form-control', 'placeholder' => 'Введите название города' ] ) }}
+                            {{ Form::text( 'city', "{$data->content->city}", [ 'class' => 'form-control', 'placeholder' => 'Введите название города' ] ) }}
                             <br>
                             {{ Form::label( 'title', 'Количество ценников' ) }}
-                            {{ Form::number( 'numprice_on_object', '', [ 'class' => 'form-control', 'placeholder' => 'Укажите количество ценников на объекте' ] ) }}
+                            {{ Form::number( 'numprice_on_object', "{$data->content->numprice_on_object}", [ 'class' => 'form-control', 'placeholder' => 'Укажите количество ценников на объекте' ] ) }}
                             <br>
                             {{ Form::label( 'title', 'Дополнительная информация' ) }}
-                            {{ Form::textarea( 'additional_information', '', [ 'class' => 'form-control', 'placeholder' => 'Можете указать дополнительную информацию' ] ) }}
+                            {{ Form::textarea( 'additional_information', "{$data->content->additional_information}", [ 'class' => 'form-control', 'placeholder' => 'Можете указать дополнительную информацию' ] ) }}
                             <br>
                             <!-- {{ Form::submit('Добавить') }} -->
                             <div class="d-flex justify-content-between">
@@ -44,7 +44,7 @@
                                         class="btn btn-primary">Назад</a>
                                 </div>
                                 <div>
-                                    <button type="submit" class="btn btn-primary">Добавить</button>
+                                    <button type="submit" class="btn btn-primary">Обновить</button>
                                 </div>
                             </div>
                         </div>

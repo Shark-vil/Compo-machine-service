@@ -6,6 +6,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">Список магазинов</div>
+                <br>
+                <div class="row justify-content-center">
+                    <a role="button" href="{{ URL::to("/stores/create") }}" class="btn btn-primary">Добавить новую запись</a>
+                </div>
                 <div class="card-body">
                     <table class="table">
                         <thead>
@@ -27,9 +31,9 @@
                             <td>{{ $store->city }}</td>
                             <td>{{ $store->numprice_on_object }}</td>
                             <td>
-                                <a role="button" href="{{ URL::to("/api/stores/show/{$store->id}") }}" class="btn btn-primary">Посмотреть</a>
-                                <a role="button" href="#" class="btn btn-primary">Изменить</a>
-                                <a role="button" href="#" class="btn btn-primary">Удалить</a>
+                                <a role="button" href="{{ URL::to("/stores/view/{$store->id}") }}" class="btn btn-primary">Посмотреть</a>
+                                <a role="button" href="{{ URL::to("/stores/change/{$store->id}") }}" class="btn btn-primary">Изменить</a>
+                                <a role="button" href="{{ URL::to("/stores/remove/{$store->id}") }}" class="btn btn-primary">Удалить</a>
                             </td>
                             </tr>
                             @endforeach

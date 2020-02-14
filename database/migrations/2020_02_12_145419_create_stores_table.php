@@ -20,7 +20,7 @@ class CreateStoresTable extends Migration
             $table->string('city');
             $table->integer('numprice_on_object');
             $table->text('additional_information');
-            //$table->timestamps();
+            $table->timestamps();
         });
     }
 

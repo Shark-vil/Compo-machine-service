@@ -4,16 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Store;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use Illuminate\Routing\UrlGenerator;
 
 class StoreController extends Controller
 {
+    protected $url;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UrlGenerator $url)
     {
+        $this->url = $url;
+
         //$this->middleware('auth');
     }
     
@@ -34,14 +40,55 @@ class StoreController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        if (count($request->all()) != 0)
+        {
+            $toArray = json_decode( $this->store($request)->content(), FALSE );
+
+            if ( !$toArray->success )
+                return view('stores/create', ['data' => $toArray]);
+            else
+                return redirect("stores/view/{$toArray->content->id}");
+        }
+
         return view('stores/create');
     }
 
     public function view(int $storeid)
     {
-        return view('stores/view', ['storeid' => $storeid]);
+        $toArray = json_decode( $this->show($storeid)->content(), FALSE );
+
+        if ( !$toArray->success )
+            return redirect('stores');
+
+        return view('stores/view', ['data' => $toArray]);
+    }
+
+    public function remove(int $storeid)
+    {
+        $toArray = json_decode( $this->destroy($storeid)->content(), FALSE );
+        return redirect('stores');
+    }
+
+    public function change(Request $request, int $storeid)
+    {
+        if (count($request->all()) != 0)
+        {
+            $toArray = json_decode( $this->update($request, $storeid)->content(), FALSE );
+
+            if ( !$toArray->success )
+                return view("stores/change", ['data' => $toArray]);
+            else
+                return redirect("stores/change/{$toArray->content->id}");
+        }
+
+        $toArray = json_decode( $this->show($storeid)->content(), FALSE );
+
+        if ( !$toArray->success )
+            return redirect('stores');
+
+        return view('stores/change', ['data' => $toArray]);
     }
 
     /**
@@ -140,24 +187,79 @@ class StoreController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
+     *----------------------
+     * OLD: public function update(Request $request, Store $store)
+     * NEW: public function update(Request $request, int $storeid)
+     * ---------------------
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Store  $store
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Store $store)
+    public function update(Request $request, int $storeid)
     {
-        //
+        $store = Store::where('id', $storeid)->limit(1)->get()->toArray();
+
+        if ( count( $store ) == 0 )
+            return response()->json([
+                'success' => false,
+                'content' => 'error',
+                'error' => [
+                    'type' => 'bad_id',
+                    'description' => 'There is no such value in the database.' 
+                ]
+            ]);
+
+        $name = $request->input('name');
+        $street = $request->input('street');
+        $city = $request->input('city');
+        $numprice_on_object = $request->input('numprice_on_object');
+        $additional_information = $request->input('additional_information');
+
+        $newData = array(
+            'id' => $storeid,
+            'name' => $name,
+            'street' => $street,
+            'city' => $city,
+            'numprice_on_object' => $numprice_on_object,
+            'additional_information' => ( !isset($additional_information) ) ? "" : $additional_information
+        );
+
+        $result = Store::where('id', $storeid)->update($newData);
+
+        return response()->json([
+            'success' => true,
+            'content' => $newData
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
+     *----------------------
+     * OLD: public function destroy(Store $store)
+     * NEW: public function destroy(int $storeid)
+     * ---------------------
      * @param  \App\Store  $store
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Store $store)
+    public function destroy(int $storeid)
     {
-        //
+        $store = Store::where('id', $storeid)->limit(1)->get()->toArray();
+        
+        if ( count( $store ) == 0 )
+            return response()->json([
+                'success' => false,
+                'content' => 'error',
+                'error' => [
+                    'type' => 'bad_id',
+                    'description' => 'There is no such value in the database.' 
+                ]
+            ]);
+
+        $result = Store::destroy($store[0]['id']);
+
+        return response()->json([
+            'success' => true,
+            'content' => $store[0]
+        ]);
     }
 }
