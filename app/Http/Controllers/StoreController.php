@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Store;
+use App\Ticket;
+use App\message;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Routing\UrlGenerator;
@@ -20,7 +22,7 @@ class StoreController extends Controller
     {
         $this->url = $url;
 
-        //$this->middleware('auth');
+        $this->middleware('auth');
     }
     
     /**
@@ -243,6 +245,17 @@ class StoreController extends Controller
      */
     public function destroy(int $storeid)
     {
+        $tickets = Ticket::where('store_id', $storeid)->get()->toArray();
+
+        foreach( $tickets as $ticket )
+        {
+            $messages = Message::where('ticket_id', $ticket['id'])->get()->toArray();
+            foreach( $messages as $message )
+                Message::destroy($message['id']);
+
+            Ticket::destroy($ticket['id']);
+        }
+
         $store = Store::where('id', $storeid)->limit(1)->get()->toArray();
         
         if ( count( $store ) == 0 )

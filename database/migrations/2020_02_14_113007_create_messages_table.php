@@ -15,7 +15,9 @@ class CreateMessagesTable extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('message');
+            $table->text('message');
+            $table->string('user_name');
+            $table->dateTime('date_time');
             $table->bigInteger('ticket_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('ticket_id')->references('id')->on('tickets');

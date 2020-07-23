@@ -15,9 +15,8 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('status');
+            $table->boolean('status')->default(false);
             $table->dateTime('date');
-            $table->text('additional_information');
             $table->bigInteger('store_id')->unsigned();
             $table->foreign('store_id')->references('id')->on('stores');
             $table->timestamps();

@@ -19,6 +19,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+// Store
 Route::get('/stores', 'StoreController@index');
 Route::get('/stores/create', 'StoreController@create');
 Route::post('/stores/create', 'StoreController@create');
@@ -27,7 +28,17 @@ Route::get('/stores/view/{id}', 'StoreController@view');
 Route::get('/stores/change/{id}', 'StoreController@change');
 Route::post('/stores/change/{id}', 'StoreController@change');
 
-// Not protected api
+// Ticket
+Route::get('/tickets', 'TicketController@view');
+Route::get('/tickets/open/{id}', 'TicketController@open');
+Route::get('/tickets/{id}', 'TicketController@index');
+Route::post('/tickets/close/{id}', 'TicketController@close');
+
+// Messages
+Route::post('/messages/store', 'MessageController@store');
+Route::get('/messages/show/{id}', 'MessageController@show');
+
+// Store api
 Route::post('/api/stores/store', 'StoreController@store');
 Route::get('/api/stores/show/{id}', 'StoreController@show');
 Route::delete('/api/stores/destroy/{id}', 'StoreController@destroy');

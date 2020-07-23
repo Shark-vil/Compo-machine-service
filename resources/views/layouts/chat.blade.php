@@ -19,6 +19,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/chat.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -101,4 +102,107 @@
         </main>
     </div>
 </body>
+<!-- <script src="{{ asset('js/chat_desing.js') }}"></script>-->
+<!--<script src="{{ asset('js/chat_logic.js') }}"></script>-->
+<script>
+    $( document ).ready(function() {
+        const messages = document.getElementById('chatBlock');
+        function scrollToBottom() {
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function sendMessage()
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{ URL::to("/messages/store") }}",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    message: $("#messageBox").val(),
+                    ticket_id: {{ $ticket->id }},
+                },
+                async: true,
+                success: function (data) {
+                    $("#messageBox").val('')
+                    scrollToBottom();
+                    console.log( data );
+                },
+                error: function (data, textStatus, errorThrown) {
+                    console.log(data);
+                },
+            });
+        }
+
+        /* прикрепить событие submit к форме */
+        $("#messageSemdBtn").click(function() {
+            sendMessage();
+        });
+
+        $("#closeTicketBtn").click(function() {
+            let isConfim = confirm("Вы уверены что хотите закрыть тикет? После закрытия продолжить переписку бкдет невозможно.");
+            if ( isConfim ) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ URL::to("/tickets/close/$ticket->id") }}",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    async: true,
+                    success: function (data) {
+                        $("#chatFrom").remove();
+                        console.log( data );
+                    },
+                    error: function (data, textStatus, errorThrown) {
+                        console.log(data);
+                    },
+                });
+            }
+        });
+
+        function readMessages()
+        {
+            $.ajax({
+                type: "GET",
+                url: "{{ URL::to("/messages/show/$ticket->id") }}",
+                async: true,
+                success: function (data) {
+                    if ( data.content.ticket_status == false ) {
+                        if ( $("#chatFrom").length != 0 ) {
+                            $("#chatFrom").remove();
+                        }
+                    }
+                    
+                    if ( data.success == true ) {  
+                        for (id in data.content.messages) {
+                            var value = data.content.messages[id];
+                            if ( $("#user_message_" + value.id).length == 0 ) {
+                                if ( value.user_id == {{ Auth::id() }} ) {
+                                    $( "#chatBlock" ).append(`<div id="user_message_${value.id}" class="container darker sender chatbox">
+                                        <h5 class="right">${value.user_name}</h5>
+                                        <div>${value.message}</div>
+                                        <span class="time-right">${value.date_time}</span>
+                                    </div>`);
+                                } else {
+                                    $( "#chatBlock" ).append(`<div id="user_message_${value.id}" class="container chatbox">
+                                        <h5>${value.user_name}</h5>
+                                        <p>${value.message}</p>
+                                        <span class="time-right">${value.date_time}</span>
+                                    </div>`);
+                                }
+
+                                scrollToBottom();
+                            }
+                        }
+                    }
+                    setTimeout(readMessages, 500);
+                },
+                error: function (data, textStatus, errorThrown) {
+                    setTimeout(readMessages, 1000);
+                },
+            });
+        }
+
+        readMessages();
+    });
+</script>
 </html>
